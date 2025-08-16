@@ -1,4 +1,4 @@
-#🌦 Weather App
+🌦 Weather App
 
 Aplikacja pogodowa stworzona w HTML, CSS i JavaScript z wykorzystaniem OpenWeatherMap API oraz geocode.maps.co. Projekt umożliwia wyszukiwanie miasta i prezentuje bieżące informacje pogodowe w przejrzystej formie.
 
@@ -14,6 +14,7 @@ Funkcjonalności
 Screenshoty
 ![Podgląd aplikacji](https://i.imgur.com/5PzBXvJ.jpeg)
 ![Podgląd aplikacji](https://i.imgur.com/RLG9Kd6.jpeg)
+
 
 
 
