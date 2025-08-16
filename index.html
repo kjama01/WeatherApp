@@ -12,24 +12,66 @@
     ></script>
   </head>
   <body>
-    <div id="main">
-      <div id="top">
-        <input type="text" required id="inputData" placeholder="Search city" />
-      </div>
-      <div id="bottom">
-        <div id="bottom-left">
-          <img src="/icons/icon_0_0-removebg-preview.png" id="weatherimg" />
+    <div id="all">
+      <nav>
+        <div id="logo-container">
+          <img id="logo" src="./icons/logo.png" />
+          <h2>Weather App</h2>
         </div>
-        <div id="bottom-right">
-          <span id="temperature" class="ui"></span>
-          <span id="description" class="ui"></span>
-          <span id="city" class="ui"></span>
+        <div class="input-container">
+          <input
+            type="text"
+            id="inputData"
+            placeholder="Search city"
+            required
+          />
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        <div id="temp-slider">
+          <span>&deg;C</span>
+          <div id="slider">
+            <div id="slider-inside"></div>
+          </div>
+          <span>&deg;F</span>
+        </div>
+      </nav>
+      <div id="main">
+        <div id="left">
+          <div id="left-container">
+            <span id="date"></span>
+            <span id="city" class="ui"></span>
+            <span id="feels"></span>
+            <span id="where"><img id="flag" /><span id="country"></span></span>
+            <span
+              ><span id="sunrise"></span>
+              <span id="sunset"></span>
+            </span>
+            <span id="update"
+              ><i class="fa-solid fa-stopwatch"></i> <span id="hour"></span
+            ></span>
+          </div>
+        </div>
+        <div id="right">
+          <div id="right-container">
+            <div id="weatherimg"></div>
+            <span id="temperature" class="ui"></span>
+            <span id="description" class="ui"></span>
+          </div>
+        </div>
+        <div id="bottom">
           <span
-            ><i class="fa-solid fa-water"> </i
-            ><span id="rain" class="ui"> </span
+            ><i class="fa-solid fa-droplet"></i>
+            <span id="humidity"></span>
+          </span>
+          <span><i class="fa-solid fa-wind"></i> <span id="wind"> </span></span>
+          <span
+            ><i class="fa-solid fa-weight-scale"></i><span id="pressure"></span
           ></span>
           <span
-            ><i class="fa-solid fa-wind"></i> <span id="wind" class="ui"> </span
+            ><i class="fa-solid fa-cloud"></i><span id="clouds"></span
+          ></span>
+          <span>
+            <i class="fa-solid fa-water"> </i><span id="rain"> </span
           ></span>
         </div>
       </div>

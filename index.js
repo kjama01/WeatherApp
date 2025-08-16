@@ -29,63 +29,169 @@ async function getWeather(inputVal) {
 function createWeatherObject(weatherData) {
   return {
     name: weatherData.name,
+    timeZone: weatherData.timezone,
+    timeStamp: weatherData.dt,
     main: weatherData.weather[0].main,
     temperature: weatherData.main.temp,
+    country: weatherData.sys.country,
+    description: weatherData.weather[0].description,
+    feels: weatherData.main.feels_like,
+    pressure: weatherData.main.pressure,
     wind: weatherData.wind.speed,
     rain: weatherData.rain,
-    description: weatherData.weather[0].description,
+    sunset: weatherData.sys.sunset,
+    sunrise: weatherData.sys.sunrise,
+    clouds: weatherData.clouds.all,
+    humidity: weatherData.main.humidity,
   };
 }
+
+const slider = document.getElementById("slider");
+let symbol = 0;
+let rawTemperature = null;
+let rawFeels = null;
+slider.addEventListener("click", () => {
+  symbol = +!symbol;
+
+  const tempResult = changeDegree(rawTemperature, symbol);
+  temperature = tempResult.temp;
+  degree = tempResult.degree;
+
+  const feelsResult = changeDegree(rawFeels, symbol);
+  feels = feelsResult.temp;
+
+  document.getElementById("temperature").textContent = `${temperature.toFixed(
+    1
+  )}${degree}`;
+  document.getElementById("feels").textContent = `Feels like: ${feels.toFixed(
+    1
+  )}${degree}`;
+
+  for (let node of slider.children) {
+    node.classList.toggle("active");
+  }
+});
+
 function updateUI(object) {
   changeImage(object.main);
 
-  let temp = document.getElementById("temperature");
-  temp.textContent = object.temperature + "℃";
+  const timestamp = object.timeStamp;
+  const offset = object.timeZone;
 
-  let desc = document.getElementById("description");
-  let fulldesc =
+  const time = formatTime(timestamp, offset);
+  const localDate = new Date((timestamp + offset) * 1000);
+  const day = "Today";
+  const month = localDate.toLocaleString("en-US", { month: "short" });
+  const date = localDate.getDate();
+
+  const countryCode = object.country;
+  const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+  const countryName = regionNames.of(countryCode);
+  const flag = `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
+
+  document.getElementById("flag").src = flag;
+  document.getElementById("country").textContent = countryName;
+  document.getElementById("city").textContent = object.name;
+  document.getElementById("hour").textContent = `Last updated: ${time}`;
+  document.getElementById("date").textContent = `${day}, ${month} ${date}`;
+  document.getElementById(
+    "humidity"
+  ).textContent = `Humidity: ${object.humidity}%`;
+
+  const fulldesc =
     object.description.charAt(0).toUpperCase() + object.description.slice(1);
-  desc.textContent = fulldesc;
+  document.getElementById("description").textContent = fulldesc;
 
-  let city = document.getElementById("city");
-  city.textContent = object.name;
+  rawTemperature = object.temperature;
+  rawFeels = object.feels;
 
-  let rain = document.getElementById("rain");
-  let finalrain = object.rain == undefined ? 0 : object.rain["1h"];
-  rain.textContent = finalrain + " %";
+  const result = changeDegree(rawTemperature, symbol);
+  temperature = result.temp;
+  degree = result.degree;
 
-  let wind = document.getElementById("wind");
-  let finalwind = object.wind * 3.6;
-  wind.textContent = finalwind.toFixed(1) + " km/h";
+  const feelsResult = changeDegree(rawFeels, symbol);
+  feels = feelsResult.temp;
+
+  document.getElementById("temperature").textContent = `${temperature.toFixed(
+    1
+  )}${degree}`;
+  document.getElementById("feels").textContent = `Feels like: ${feels.toFixed(
+    1
+  )}${degree}`;
+  document.getElementById(
+    "pressure"
+  ).textContent = `Pressure: ${object.pressure}hPa`;
+
+  const finalWind = (object.wind * 3.6).toFixed(1);
+  document.getElementById("wind").textContent = `Wind: ${finalWind} km/h`;
+
+  const clouds = object.clouds ?? 0;
+  document.getElementById("clouds").textContent = `Clouds: ${clouds}%`;
+
+  const finalRain = object.rain?.["1h"] ?? 0;
+  document.getElementById("rain").textContent = `Rain: ${finalRain}mm`;
+
+  const sunriseStr = formatTime(object.sunrise, offset);
+  const sunsetStr = formatTime(object.sunset, offset);
+
+  document.getElementById("sunrise").textContent = `Sunrise: ${sunriseStr}`;
+  document.getElementById("sunset").textContent = `Sunset: ${sunsetStr}`;
+}
+
+function changeDegree(temperature, symbol) {
+  return {
+    temp: symbol === 1 ? (temperature * 9) / 5 + 32 : temperature,
+    degree: symbol === 1 ? "°F" : "°C",
+  };
+}
+
+function formatTime(timestamp, timezoneOffset) {
+  const localTime = new Date((timestamp + timezoneOffset) * 1000);
+  return localTime.toLocaleTimeString("en-US", {
+    timeZone: "UTC",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
 }
 function changeImage(value) {
   const weatherTab = {
     Rain: {
-      src: "/icons/rain.png",
-      color: "linear-gradient(135deg, #4A5568, #2D3748, #1A202C",
+      iconClass: "weather-rain",
+      background: "icons/rain-body.jpg",
+      gradient:
+        "linear-gradient(135deg, #4a4e69,rgb(64, 66, 90),rgb(71, 75, 104))",
     },
     Clear: {
-      src: "/icons/clear.png",
-      color: "linear-gradient(135deg, #87CEEB, #FFFFFF)",
+      iconClass: "weather-clear",
+      background: "icons/clear-body.jpg",
+      gradient: "linear-gradient(135deg, #56ccf2, #2f80ed)",
     },
     Snow: {
-      src: "/icons/snow.png",
-      color: "linear-gradient(135deg, #E0F7FA, #FFFFFF, #B0E0E6)",
+      iconClass: "weather-snow",
+      background: "icons/snow-body.jpg",
+      gradient: "linear-gradient(135deg, #e0f7fa, #ffffff, #b0e0e6)",
     },
     Clouds: {
-      src: "/icons/cloud.png",
-      color: "linear-gradient(135deg, #DEC2C5, #D8D8D8, #F0F0F0)",
+      iconClass: "weather-clouds",
+      background: "icons/cloud-body.jpg",
+      gradient: "linear-gradient(135deg, #bdc3c7, #dfe6e9)",
     },
-    Thuderstorm: {
-      src: "/icons/thunder.png",
-      color: "linear-gradient(135deg, #1E2A40, #3A506B, #788AA3)",
+    Thunderstorm: {
+      iconClass: "weather-thunder",
+      background: "icons/thunder-body.jpg",
+      gradient: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
     },
   };
   let weatherimg = document.getElementById("weatherimg");
-  let main = document.getElementById("main");
   if (weatherTab[value]) {
-    weatherimg.src = weatherTab[value].src;
-    main.style.background = weatherTab[value].color;
+    weatherimg.className = "";
+    weatherimg.classList.add(`${weatherTab[value].iconClass}`);
+    document.getElementById(
+      "main"
+    ).style.background = `url('${weatherTab[value].background}') center/cover no-repeat`;
+    document.getElementById("all").style.background =
+      weatherTab[value].gradient;
   }
 }
 
