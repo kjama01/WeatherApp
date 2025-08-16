@@ -12,4 +12,5 @@ Funkcjonalności
 🔗 [Live Demo](https://kjama01.github.io/WeatherApp/)
 
 ##Screenshoty
-[Podgląd aplikacji](https://imgur.com/a/0j8nYsH)
+![Podgląd aplikacji](https://imgur.com/a/0j8nYsH)
+
